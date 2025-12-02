@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -15,7 +15,7 @@ import Footer from './components/Footer';
 function App() {
   const [user, setUser] = useState(null);
 
-  const handleLogin = (userData) => {
+  const handleLogin = (userData: any) => {
     setUser(userData);
   };
 

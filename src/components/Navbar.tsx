@@ -1,8 +1,12 @@
-import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 
-const Navbar = ({ user, onLogout }) => {
+interface NavbarProps {
+    user: any;
+    onLogout: () => void;
+}
+
+const Navbar = ({ user, onLogout }: NavbarProps) => {
     const navigate = useNavigate();
 
     return (

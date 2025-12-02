@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { mockCartItems, getSubjectDetails } from '../utils/mockData';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,11 @@ const Cart = () => {
 
     const [items, setItems] = useState(initialItems);
 
-    const handleRemove = (itemId) => {
+    const handleRemove = (itemId: string) => {
         setItems(items.filter(item => item.itemId !== itemId));
     };
 
-    const handlePriorityChange = (itemId, direction) => {
+    const handlePriorityChange = (itemId: string, direction: 'up' | 'down') => {
         const index = items.findIndex(i => i.itemId === itemId);
         if (index < 0) return;
 
@@ -99,13 +99,13 @@ const Cart = () => {
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant={item.subject.isMajor ? "default" : "secondary"}>
-                                        {item.subject.isMajor ? "전공" : "교양"}
+                                    <Badge variant={item.subject?.isMajor ? "default" : "secondary"}>
+                                        {item.subject?.isMajor ? "전공" : "교양"}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="font-medium">{item.subject.name}</TableCell>
-                                <TableCell>{item.subject.professorName}</TableCell>
-                                <TableCell>{item.subject.day} {item.subject.startTime}</TableCell>
+                                <TableCell className="font-medium">{item.subject?.name}</TableCell>
+                                <TableCell>{item.subject?.professorName}</TableCell>
+                                <TableCell>{item.subject?.day} {item.subject?.startTime}</TableCell>
                                 <TableCell>
                                     {item.substitute ? (
                                         <Badge variant="outline" className="text-yellow-600 border-yellow-600">

@@ -1,4 +1,3 @@
-import React from 'react';
 import { mockSimulationResults, mockCartItems, getSubjectDetails } from '../utils/mockData';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";

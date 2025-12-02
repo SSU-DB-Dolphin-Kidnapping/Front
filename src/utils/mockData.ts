@@ -1,4 +1,13 @@
-export const mockStudents = [
+export interface Student {
+    studentId: string;
+    departmentId: string;
+    nickname: string;
+    password: string;
+    name: string;
+    avgLatency: number;
+}
+
+export const mockStudents: Student[] = [
     {
         studentId: "20230001",
         departmentId: "DEPT01",
@@ -9,24 +18,48 @@ export const mockStudents = [
     },
 ];
 
-export const mockColleges = [
+export interface College {
+    collegeId: string;
+    name: string;
+}
+
+export const mockColleges: College[] = [
     { collegeId: "COL01", name: "IT대학" },
     { collegeId: "COL02", name: "공과대학" },
 ];
 
-export const mockDepartments = [
+export interface Department {
+    departmentId: string;
+    collegeId: string;
+    name: string;
+}
+
+export const mockDepartments: Department[] = [
     { departmentId: "DEPT01", collegeId: "COL01", name: "소프트웨어학부" },
     { departmentId: "DEPT02", collegeId: "COL01", name: "AI융합학부" },
     { departmentId: "DEPT03", collegeId: "COL02", name: "기계공학과" },
 ];
 
-export const mockProfessors = [
+export interface Professor {
+    professorId: string;
+    departmentId: string;
+    name: string;
+}
+
+export const mockProfessors: Professor[] = [
     { professorId: "PROF01", departmentId: "DEPT01", name: "김교수" },
     { professorId: "PROF02", departmentId: "DEPT01", name: "이교수" },
     { professorId: "PROF03", departmentId: "DEPT02", name: "박교수" },
 ];
 
-export const mockSubjects = [
+export interface Subject {
+    subjectId: string;
+    name: string;
+    isMajor: boolean;
+    credits: number;
+}
+
+export const mockSubjects: Subject[] = [
     { subjectId: "SUB01", name: "자료구조", isMajor: true, credits: 3 },
     { subjectId: "SUB02", name: "알고리즘", isMajor: true, credits: 3 },
     { subjectId: "SUB03", name: "운영체제", isMajor: true, credits: 3 },
@@ -35,7 +68,23 @@ export const mockSubjects = [
     { subjectId: "SUB06", name: "미적분학I", isMajor: false, credits: 3 },
 ];
 
-export const mockClasses = [
+export interface ClassInfo {
+    classId: string;
+    subjectId: string;
+    professorId: string;
+    day: string;
+    startTime: string;
+    endTime: string;
+    room: string;
+    year: number;
+    semester: number;
+    number: number;
+    section: string;
+    maxStudents: number;
+    currentStudents: number;
+}
+
+export const mockClasses: ClassInfo[] = [
     {
         classId: "CLS01",
         subjectId: "SUB01",
@@ -98,7 +147,15 @@ export const mockClasses = [
     },
 ];
 
-export const mockCarts = [
+export interface Cart {
+    cartId: string;
+    studentId: string;
+    name: string;
+    number: number;
+    createdAt: string;
+}
+
+export const mockCarts: Cart[] = [
     {
         cartId: "CART01",
         studentId: "20230001",
@@ -108,7 +165,15 @@ export const mockCarts = [
     },
 ];
 
-export const mockCartItems = [
+export interface CartItem {
+    itemId: string;
+    cartId: string;
+    subjectId: string;
+    priority: number;
+    substituteSubjectId: string | null;
+}
+
+export const mockCartItems: CartItem[] = [
     {
         itemId: "ITEM01",
         cartId: "CART01",
@@ -125,7 +190,14 @@ export const mockCartItems = [
     },
 ];
 
-export const mockSimulationResults = [
+export interface SimulationResult {
+    itemId: string;
+    testId: string;
+    success: boolean;
+    failReason: string | null;
+}
+
+export const mockSimulationResults: SimulationResult[] = [
     {
         itemId: "ITEM01",
         testId: "TEST01",
@@ -140,7 +212,12 @@ export const mockSimulationResults = [
     },
 ];
 
-export const mockCompletionDivisions = [
+export interface CompletionDivision {
+    divisionId: string;
+    name: string;
+}
+
+export const mockCompletionDivisions: CompletionDivision[] = [
     { divisionId: "CD001", name: "전공필수" },
     { divisionId: "CD002", name: "전공선택" },
     { divisionId: "CD003", name: "교양필수" },
@@ -156,8 +233,12 @@ export const mockUsers = [
     }
 ];
 
+export interface SubjectDetails extends Subject, Omit<Partial<ClassInfo>, 'subjectId'> {
+    professorName: string;
+}
+
 // Helper to get full subject details
-export const getSubjectDetails = (subjectId) => {
+export const getSubjectDetails = (subjectId: string): SubjectDetails | null => {
     const subject = mockSubjects.find(s => s.subjectId === subjectId);
     if (!subject) return null;
 
@@ -166,7 +247,7 @@ export const getSubjectDetails = (subjectId) => {
 
     return {
         ...subject,
-        ...classInfo,
+        ...(classInfo || {}),
         professorName: professor ? professor.name : "미정"
     };
 };

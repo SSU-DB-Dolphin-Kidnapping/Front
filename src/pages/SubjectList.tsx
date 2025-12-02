@@ -17,7 +17,9 @@ const SubjectList = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     // Enrich subjects with professor info for searching
-    const enrichedSubjects = mockSubjects.map(s => getSubjectDetails(s.subjectId));
+    const enrichedSubjects = mockSubjects
+        .map(s => getSubjectDetails(s.subjectId))
+        .filter((s): s is NonNullable<typeof s> => s !== null);
 
     const filteredSubjects = enrichedSubjects.filter(subject =>
         subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,7 +39,7 @@ const SubjectList = () => {
                     type="text"
                     placeholder="과목명, 과목코드, 또는 교수명으로 검색..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     className="max-w-md"
                 />
             </div>

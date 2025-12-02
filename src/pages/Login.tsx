@@ -13,13 +13,17 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-const Login = ({ onLogin }) => {
+interface LoginProps {
+    onLogin: (user: any) => void;
+}
+
+const Login = ({ onLogin }: LoginProps) => {
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const user = mockUsers.find(u => u.id === id && u.password === password);
 

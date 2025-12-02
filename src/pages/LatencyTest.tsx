@@ -1,24 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { mockStudents } from '../utils/mockData';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card";
 
 const LatencyTest = () => {
     const [student, setStudent] = useState(mockStudents[0]);
     const [isTesting, setIsTesting] = useState(false);
-    const [clickCount, setClickCount] = useState(0);
-    const [results, setResults] = useState([]);
+    const [, setClickCount] = useState(0);
+    const [results, setResults] = useState<number[]>([]);
     const [targetVisible, setTargetVisible] = useState(false);
     const [startTime, setStartTime] = useState(0);
     const [message, setMessage] = useState("테스트 시작 버튼을 눌러 측정을 시작하세요.");
 
-    const timerRef = useRef(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const startTest = () => {
         setIsTesting(true);
@@ -55,7 +52,7 @@ const LatencyTest = () => {
         }
     };
 
-    const finishTest = (finalResults) => {
+    const finishTest = (finalResults: number[]) => {
         setIsTesting(false);
         setTargetVisible(false);
         const sum = finalResults.reduce((a, b) => a + b, 0);
@@ -70,7 +67,9 @@ const LatencyTest = () => {
     };
 
     useEffect(() => {
-        return () => clearTimeout(timerRef.current);
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
     }, []);
 
     return (

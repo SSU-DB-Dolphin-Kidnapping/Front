@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { mockStudents, mockCartItems } from '../utils/mockData';
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,11 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-const Home = ({ user }) => {
+interface HomeProps {
+    user: any;
+}
+
+const Home = ({ user }: HomeProps) => {
     const student = user || mockStudents[0];
     const cartCount = mockCartItems.length;
 

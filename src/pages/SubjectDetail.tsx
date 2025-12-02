@@ -1,11 +1,10 @@
-import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSubjectDetails, mockCartItems } from '../utils/mockData';
+import { getSubjectDetails } from '../utils/mockData';
 
 const SubjectDetail = () => {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const subject = getSubjectDetails(id);
+    const subject = id ? getSubjectDetails(id) : null;
 
     if (!subject) {
         return <div className="container">과목을 찾을 수 없습니다.</div>;
@@ -73,7 +72,7 @@ const SubjectDetail = () => {
                         </div>
                         <div className="object-attribute">
                             <span className="object-attribute-label">정원</span>
-                            <span className="object-attribute-text">{subject.currentStudents} / {subject.maxStudents} 명</span>
+                            <span className="object-attribute-text">{subject.currentStudents ?? 0} / {subject.maxStudents ?? 0} 명</span>
                         </div>
                         <div className="object-attribute">
                             <span className="object-attribute-label">경쟁률</span>
@@ -86,13 +85,13 @@ const SubjectDetail = () => {
                                     overflow: 'hidden'
                                 }}>
                                     <div style={{
-                                        width: `${(subject.currentStudents / subject.maxStudents) * 100}%`,
+                                        width: `${((subject.currentStudents ?? 0) / (subject.maxStudents ?? 1)) * 100}%`,
                                         height: '100%',
-                                        background: subject.currentStudents >= subject.maxStudents ? 'var(--danger)' : 'var(--success)'
+                                        background: (subject.currentStudents ?? 0) >= (subject.maxStudents ?? 1) ? 'var(--danger)' : 'var(--success)'
                                     }} />
                                 </div>
                                 <span className="object-status status-neutral">
-                                    {Math.round((subject.currentStudents / subject.maxStudents) * 100)}%
+                                    {Math.round(((subject.currentStudents ?? 0) / (subject.maxStudents ?? 1)) * 100)}%
                                 </span>
                             </div>
                         </div>
