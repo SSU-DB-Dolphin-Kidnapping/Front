@@ -228,8 +228,11 @@ export const mockUsers = [
     {
         id: "user1",
         studentId: "20230001",
+        departmentId: "DEPT01",
+        nickname: "빛의속도",
         password: "password123",
-        name: "김학생"
+        name: "김학생",
+        avgLatency: 250
     }
 ];
 
