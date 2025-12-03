@@ -5,7 +5,11 @@ const nextConfig = {
         return [
             {
                 source: '/api/:path*',
-                destination: 'http://localhost:8080/api/:path*', // Proxy to Backend
+                destination: 'http://16.176.176.86:8080/api/:path*', // Proxy to Backend
+            },
+            {
+                source: '/test/:path*',
+                destination: 'http://16.176.176.86:8080/test/:path*', // Proxy for latency test
             },
         ];
     },

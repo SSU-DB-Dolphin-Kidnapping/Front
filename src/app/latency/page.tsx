@@ -39,8 +39,20 @@ const LatencyTest = () => {
         }, delay);
     };
 
-    const handleTargetClick = () => {
+    const handleTargetClick = async () => {
         if (!targetVisible) return;
+
+        try {
+            const response = await fetch('/test/execute?error=');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // We don't strictly need the data, just the timing of the response
+            // await response.json(); 
+        } catch (error) {
+            console.error("Failed to fetch:", error);
+            // Optionally handle error in UI
+        }
 
         const endTime = Date.now();
         const latency = endTime - startTime;
