@@ -8,6 +8,7 @@ import {
     Card,
 } from "@/components/ui/card";
 import { useUser } from '@/components/UserProvider';
+import { client } from '@/lib/api';
 
 const LatencyTest = () => {
     const { user } = useUser();
@@ -42,16 +43,10 @@ const LatencyTest = () => {
     const handleTargetClick = async () => {
         if (!targetVisible) return;
 
-        try {
-            const response = await fetch('/test/execute?error=');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            // We don't strictly need the data, just the timing of the response
-            // await response.json(); 
-        } catch (error) {
-            console.error("Failed to fetch:", error);
-            // Optionally handle error in UI
+        const { data, error } = await client.POST('/api/test/simulation');
+
+        if (error) {
+            throw new Error(error || 'Network response was not ok');
         }
 
         const endTime = Date.now();

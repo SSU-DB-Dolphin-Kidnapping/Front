@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "codegen": "openapi-typescript http://16.176.176.86:8080/v3/api-docs -o src/types/api.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -17,6 +18,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.555.0",
     "next": "15.1.9",
+    "openapi-fetch": "^0.15.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.67.0",
@@ -35,6 +37,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "openapi-typescript": "^7.10.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.9.3"
