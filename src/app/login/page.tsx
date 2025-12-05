@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { mockUsers } from '@/utils/mockData';
+import { client } from "@/lib/api";
+import { components } from "@/types/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,18 +22,71 @@ const Login = () => {
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { login } = useUser();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const user = mockUsers.find(u => u.id === id && u.password === password);
+        setError('');
+        setLoading(true);
 
-        if (user) {
-            login(user);
+        try {
+            // 1. Login
+            const { data: loginData, error: loginError } = await client.POST("/api/student/login", {
+                body: {
+                    nickname: id,
+                    password: password
+                }
+            }) as {
+                data?: components["schemas"]["BaseResponseStudentLoginResponseDTO"],
+                error?: { message?: string }
+            };
+
+            if (loginError || !loginData?.result?.id) {
+                setError(loginError?.message || '아이디 또는 비밀번호가 일치하지 않습니다.');
+                setLoading(false);
+                return;
+            }
+
+            const studentId = loginData.result.id;
+
+            // 2. Get Student Info
+            const { data: infoData, error: infoError } = await client.GET("/api/student/{studentId}", {
+                params: {
+                    path: { studentId }
+                }
+            }) as {
+                data?: components["schemas"]["BaseResponseStudentInfoResponseDTO"],
+                error?: { message?: string }
+            };
+
+            if (infoError || !infoData?.result) {
+                setError(infoError?.message || '학생 정보를 불러오는데 실패했습니다.');
+                setLoading(false);
+                return;
+            }
+
+            const studentInfo = infoData.result;
+
+            // 3. Update User Context
+            login({
+                id: studentInfo.id,
+                studentId: studentInfo.studentNumber || '',
+                departmentId: String(studentInfo.departmentId || ''),
+                nickname: studentInfo.nickname || '',
+                password: '', // Password is not returned
+                name: studentInfo.studentName || '',
+                avgLatency: studentInfo.avgReactionTime || 0,
+            });
+
             router.push('/');
-        } else {
-            setError('아이디 또는 비밀번호가 일치하지 않습니다.');
+
+        } catch (err) {
+            console.error(err);
+            setError('서버 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -55,6 +109,7 @@ const Login = () => {
                                 value={id}
                                 onChange={(e) => setId(e.target.value)}
                                 placeholder="아이디를 입력하세요"
+                                disabled={loading}
                             />
                         </div>
                         <div className="space-y-2">
@@ -65,11 +120,12 @@ const Login = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="비밀번호를 입력하세요"
+                                disabled={loading}
                             />
                         </div>
                         {error && <div className="text-sm text-destructive">{error}</div>}
-                        <Button type="submit" className="w-full">
-                            로그인
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? '로그인 중...' : '로그인'}
                         </Button>
                     </form>
                 </CardContent>

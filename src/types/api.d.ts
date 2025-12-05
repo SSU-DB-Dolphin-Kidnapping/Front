@@ -24,6 +24,226 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/student/{studentId}/email/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 숭실대 이메일 인증 코드 검증
+         * @description 이메일로 받은 인증 코드를 검증하고, 학생을 숭실대 재학생으로 인증합니다.
+         */
+        post: operations["verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/student/{studentId}/email/send-verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 숭실대 이메일 인증 메일 발송
+         * @description 숭실대학교 이메일로 인증 코드를 발송합니다.
+         */
+        post: operations["sendVerificationEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/student/sign-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 학생 회원가입 API
+         * @description 학생 이름, 닉네임(Unique), 비밀번호로 학생 계정을 생성합니다.
+         */
+        post: operations["signUp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/student/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 학생 로그인 API
+         * @description 닉네임과 비밀번호로 로그인합니다.
+         */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bucket": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBucket"];
+        put?: never;
+        post: operations["addCourse"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bucket/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBucket"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/student/{studentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 학생 정보 조회 API
+         * @description 학생 ID로 회원 정보를 조회합니다. 비밀번호는 포함되지 않습니다.
+         */
+        get: operations["getStudentInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 학생 정보 수정 API
+         * @description 학생 이름, 비밀번호, 학년, 학과를 수정합니다. 전달된 값만 변경됩니다.
+         */
+        patch: operations["updateStudentInfo"];
+        trace?: never;
+    };
+    "/api/student/{studentId}/onboarding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 학생 온보딩 API
+         * @description 학부, 학과, 학년, 학번 정보를 입력해서 저장합니다. (현재는 OCR 없이 직접 입력)
+         */
+        patch: operations["onboarding"];
+        trace?: never;
+    };
+    "/api/student/reaction-time": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getReactionTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updateReactionTime"];
+        trace?: never;
+    };
+    "/api/bucket/priority": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updatePriorities"];
+        trace?: never;
+    };
+    "/api/bucket/best": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["setBestBucket"];
+        trace?: never;
+    };
+    "/api/bucket/alternate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updateAlternateCourse"];
+        trace?: never;
+    };
     "/api/test/results": {
         parameters: {
             query?: never;
@@ -64,6 +284,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/bucket/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMyBuckets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bucket/{bucketElementId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteCourse"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bucket/cart/{bucketId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteBucket"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -84,6 +352,118 @@ export interface components {
             /** Format: int32 */
             totalFail?: number;
             message?: string;
+        };
+        StudentEmailVerifyRequestDTO: {
+            code: string;
+        };
+        BaseResponseStudentInfoResponseDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["StudentInfoResponseDTO"];
+        };
+        StudentInfoResponseDTO: {
+            /** Format: int64 */
+            id?: number;
+            studentName?: string;
+            nickname?: string;
+            studentNumber?: string;
+            /** Format: int32 */
+            grade?: number;
+            /** Format: int64 */
+            departmentId?: number;
+            /** Format: double */
+            avgReactionTime?: number;
+            /** Format: int64 */
+            bestBucket?: number;
+            soongsilEmail?: string;
+            verified?: boolean;
+        };
+        StudentEmailSendRequestDTO: {
+            soongsilEmail: string;
+        };
+        BaseResponseVoid: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: Record<string, never>;
+        };
+        StudentSignUpRequestDTO: {
+            studentName: string;
+            nickname: string;
+            password: string;
+        };
+        BaseResponseStudentSignUpResponseDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["StudentSignUpResponseDTO"];
+        };
+        StudentSignUpResponseDTO: {
+            /** Format: int64 */
+            id?: number;
+            studentName?: string;
+            nickname?: string;
+        };
+        StudentLoginRequestDTO: {
+            nickname: string;
+            password: string;
+        };
+        BaseResponseStudentLoginResponseDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["StudentLoginResponseDTO"];
+        };
+        StudentLoginResponseDTO: {
+            /** Format: int64 */
+            id?: number;
+            studentName?: string;
+            nickname?: string;
+        };
+        BucketAddRequestDTO: {
+            /** Format: int64 */
+            teachId?: number;
+        };
+        BucketCreateRequestDTO: {
+            name?: string;
+        };
+        StudentUpdateRequestDTO: {
+            studentName?: string;
+            password?: string;
+            /** Format: int32 */
+            grade?: number;
+            /** Format: int64 */
+            departmentId?: number;
+        };
+        StudentOnboardingRequestDTO: {
+            /** Format: int64 */
+            collegeId?: number;
+            /** Format: int64 */
+            departmentId?: number;
+            /** Format: int32 */
+            grade?: number;
+            studentNumber?: string;
+        };
+        StudentReactionRequestDTO: {
+            /** Format: double */
+            avgReactionTime?: number;
+        };
+        BucketPriorityRequestDTO: {
+            /** Format: int64 */
+            bucketElementId?: number;
+            /** Format: int32 */
+            priority?: number;
+        };
+        BucketSelectRequestDTO: {
+            /** Format: int64 */
+            bucketId?: number;
+        };
+        BucketAlternateRequestDTO: {
+            /** Format: int64 */
+            bucketElementId?: number;
+            /** Format: int64 */
+            alternateTeachId?: number;
         };
         BaseResponseListTestSummaryDTO: {
             isSuccess?: boolean;
@@ -139,6 +519,48 @@ export interface components {
             earnedCredit?: number;
             courses?: components["schemas"]["CourseResultDTO"][];
         };
+        BaseResponseDouble: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            /** Format: double */
+            result?: number;
+        };
+        BaseResponseListBucketResponseDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["BucketResponseDTO"][];
+        };
+        BucketResponseDTO: {
+            /** Format: int64 */
+            bucketElementId?: number;
+            /** Format: int64 */
+            teachId?: number;
+            /** Format: int32 */
+            priority?: number;
+            majorType?: string;
+            courseName?: string;
+            professorName?: string;
+            timePlace?: string;
+            /** Format: int64 */
+            alternateTeachId?: number;
+            alternateSubjectName?: string;
+        };
+        BaseResponseListBucketSummaryDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["BucketSummaryDTO"][];
+        };
+        BucketSummaryDTO: {
+            /** Format: int64 */
+            bucketId?: number;
+            name?: string;
+            isBest?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -164,6 +586,364 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["BaseResponseSimulationResultDTO"];
+                };
+            };
+        };
+    };
+    verifyEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentEmailVerifyRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 숭실대 이메일 인증이 완료되었습니다. */
+            STUDENT2007: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseStudentInfoResponseDTO"];
+                };
+            };
+        };
+    };
+    sendVerificationEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentEmailSendRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 인증 메일이 성공적으로 발송되었습니다. */
+            STUDENT2006: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    signUp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentSignUpRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 학생 회원가입이 성공적으로 완료되었습니다. */
+            STUDENT_200_1: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseStudentSignUpResponseDTO"];
+                };
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentLoginRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 학생 로그인이 성공적으로 완료되었습니다. */
+            STUDENT2002: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseStudentLoginResponseDTO"];
+                };
+            };
+        };
+    };
+    getBucket: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseListBucketResponseDTO"];
+                };
+            };
+        };
+    };
+    addCourse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketAddRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    createBucket: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketCreateRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    getStudentInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 학생 정보 조회 성공 */
+            STUDENT2003: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseStudentInfoResponseDTO"];
+                };
+            };
+        };
+    };
+    updateStudentInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentUpdateRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 학생 정보 수정 성공 */
+            STUDENT2004: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseStudentInfoResponseDTO"];
+                };
+            };
+        };
+    };
+    onboarding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentOnboardingRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 학생 온보딩 정보가 성공적으로 저장되었습니다. */
+            STUDENT2005: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseStudentInfoResponseDTO"];
+                };
+            };
+        };
+    };
+    getReactionTime: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseDouble"];
+                };
+            };
+        };
+    };
+    updateReactionTime: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentReactionRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    updatePriorities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketPriorityRequestDTO"][];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    setBestBucket: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketSelectRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    updateAlternateCourse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketAlternateRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
                 };
             };
         };
@@ -207,6 +987,70 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["BaseResponseTestDetailDTO"];
+                };
+            };
+        };
+    };
+    getMyBuckets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseListBucketSummaryDTO"];
+                };
+            };
+        };
+    };
+    deleteCourse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bucketElementId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    deleteBucket: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bucketId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
                 };
             };
         };
