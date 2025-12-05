@@ -365,3 +365,60 @@ export const mockTestDetail: TestDetail = {
         }
     ]
 };
+
+export interface BucketSummaryDTO {
+    bucketId: number;
+    name: string;
+    isBest: boolean;
+    createdAt: string;
+}
+
+export const mockBucketSummaries: BucketSummaryDTO[] = [
+    {
+        bucketId: 1,
+        name: "기본 장바구니",
+        isBest: true,
+        createdAt: "2024-03-01T10:00:00Z"
+    },
+    {
+        bucketId: 2,
+        name: "플랜 B",
+        isBest: false,
+        createdAt: "2024-03-02T15:30:00Z"
+    }
+];
+
+export interface BucketResponseDTO {
+    bucketElementId: number;
+    teachId: number;
+    priority: number;
+    majorType: string;
+    courseName: string;
+    professorName: string;
+    timePlace: string;
+    alternateTeachId?: number;
+    alternateSubjectName?: string;
+}
+
+export const mockBucketItems: BucketResponseDTO[] = [
+    {
+        bucketElementId: 101,
+        teachId: 2001,
+        priority: 1,
+        majorType: "전공",
+        courseName: "자료구조",
+        professorName: "김교수",
+        timePlace: "월 10:30-12:00 (정보관-101)",
+        alternateTeachId: 2005,
+        alternateSubjectName: "알고리즘"
+    },
+    {
+        bucketElementId: 102,
+        teachId: 2002,
+        priority: 2,
+        majorType: "교양",
+        courseName: "현대사회와윤리",
+        professorName: "이철학",
+        timePlace: "화 13:30-15:00 (진리관-204)"
+    }
+];
