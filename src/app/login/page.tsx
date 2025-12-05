@@ -80,7 +80,12 @@ const Login = () => {
                 avgLatency: studentInfo.avgReactionTime || 0,
             });
 
-            router.push('/');
+            // 4. Redirect based on onboarding status
+            if (!studentInfo.studentNumber) {
+                router.push('/onboarding');
+            } else {
+                router.push('/');
+            }
 
         } catch (err) {
             console.error(err);
