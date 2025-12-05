@@ -41,6 +41,39 @@ export const mockDepartments: Department[] = [
     { departmentId: "DEPT03", collegeId: "COL02", name: "기계공학과" },
 ];
 
+export interface ApiCollege {
+    collegeId: number;
+    name: string;
+}
+
+export const apiColleges: ApiCollege[] = [
+    { collegeId: 1, name: "IT대학" },
+    { collegeId: 2, name: "공과대학" },
+    { collegeId: 3, name: "경영대학" },
+    { collegeId: 4, name: "인문대학" },
+];
+
+export interface ApiDepartment {
+    departmentId: number;
+    collegeId: number;
+    name: string;
+}
+
+export const apiDepartments: ApiDepartment[] = [
+    { departmentId: 1, collegeId: 1, name: "소프트웨어학부" },
+    { departmentId: 2, collegeId: 1, name: "AI융합학부" },
+    { departmentId: 3, collegeId: 1, name: "컴퓨터학부" },
+    { departmentId: 4, collegeId: 1, name: "글로벌미디어학부" },
+    { departmentId: 5, collegeId: 1, name: "정보통신전자공학부" },
+    { departmentId: 6, collegeId: 2, name: "기계공학부" },
+    { departmentId: 7, collegeId: 2, name: "전기공학부" },
+    { departmentId: 8, collegeId: 2, name: "산업정보시스템공학과" },
+    { departmentId: 9, collegeId: 3, name: "경영학부" },
+    { departmentId: 10, collegeId: 3, name: "국제무역학과" },
+    { departmentId: 11, collegeId: 4, name: "국어국문학과" },
+    { departmentId: 12, collegeId: 4, name: "영어영문학과" },
+];
+
 export interface Professor {
     professorId: string;
     departmentId: string;
