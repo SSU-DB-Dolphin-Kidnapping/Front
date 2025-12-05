@@ -255,3 +255,113 @@ export const getSubjectDetails = (subjectId: string): SubjectDetails | null => {
         professorName: professor ? professor.name : "미정"
     };
 };
+export interface TestSummary {
+    testId: number;
+    testDate: string;
+    totalCourses: number;
+    successCount: number;
+    failCount: number;
+}
+
+export const mockTestSummaries: TestSummary[] = [
+    {
+        testId: 1,
+        testDate: "2024-03-15T10:00:00",
+        totalCourses: 6,
+        successCount: 5,
+        failCount: 1
+    },
+    {
+        testId: 2,
+        testDate: "2024-03-16T14:30:00",
+        totalCourses: 6,
+        successCount: 6,
+        failCount: 0
+    }
+];
+
+export interface CourseResult {
+    courseName: string;
+    className: string;
+    professorName: string;
+    credit: number;
+    isSuccess: boolean;
+    failedReason?: string;
+    priority: number;
+}
+
+export interface TestDetail {
+    testId: number;
+    testDate: string;
+    studentName: string;
+    bucketName: string;
+    totalCourses: number;
+    successCount: number;
+    failCount: number;
+    plannedCredit: number;
+    earnedCredit: number;
+    courses: CourseResult[];
+}
+
+export const mockTestDetail: TestDetail = {
+    testId: 1,
+    testDate: "2024-03-15T10:00:00",
+    studentName: "김학생",
+    bucketName: "기본 장바구니",
+    totalCourses: 6,
+    successCount: 5,
+    failCount: 1,
+    plannedCredit: 18,
+    earnedCredit: 15,
+    courses: [
+        {
+            courseName: "자료구조",
+            className: "A반",
+            professorName: "김교수",
+            credit: 3,
+            isSuccess: true,
+            priority: 1
+        },
+        {
+            courseName: "알고리즘",
+            className: "A반",
+            professorName: "이교수",
+            credit: 3,
+            isSuccess: true,
+            priority: 2
+        },
+        {
+            courseName: "운영체제",
+            className: "A반",
+            professorName: "박교수",
+            credit: 3,
+            isSuccess: true,
+            priority: 3
+        },
+        {
+            courseName: "데이터베이스",
+            className: "A반",
+            professorName: "최교수",
+            credit: 3,
+            isSuccess: false,
+            failedReason: "정원 초과",
+            priority: 4
+        },
+        {
+            courseName: "컴퓨터네트워크",
+            className: "A반",
+            professorName: "정교수",
+            credit: 3,
+            isSuccess: true,
+            priority: 5
+        },
+        {
+            courseName: "미적분학I",
+            className: "B반",
+            professorName: "수학자",
+            credit: 3,
+            isSuccess: true,
+            priority: 6
+        }
+    ]
+};

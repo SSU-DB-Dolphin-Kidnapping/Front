@@ -43,12 +43,6 @@ const LatencyTest = () => {
     const handleTargetClick = async () => {
         if (!targetVisible) return;
 
-        const { data, error } = await client.POST('/api/test/simulation');
-
-        if (error) {
-            throw new Error(error || 'Network response was not ok');
-        }
-
         const endTime = Date.now();
         const latency = endTime - startTime;
         const newResults = [...results, latency];
@@ -63,18 +57,28 @@ const LatencyTest = () => {
         }
     };
 
-    const finishTest = (finalResults: number[]) => {
+    const finishTest = async (finalResults: number[]) => {
         setIsTesting(false);
         setTargetVisible(false);
         const sum = finalResults.reduce((a, b) => a + b, 0);
         const avg = Math.round(sum / finalResults.length);
 
-        // Update mock data
-        const updatedStudent = { ...student, avgLatency: avg };
-        setStudent(updatedStudent);
-        // In a real app, we would send an API request here
+        try {
+            const { error } = await client.PATCH("/api/student/reaction-time", {
+                body: {
+                    avgReactionTime: avg
+                }
+            });
 
-        setMessage(`테스트 완료! 평균 반응속도: ${avg}ms`);
+            // Update local state only on success
+            const updatedStudent = { ...student, avgLatency: avg };
+            setStudent(updatedStudent);
+            setMessage(`테스트 완료! 평균 반응속도: ${avg}ms (저장됨)`);
+
+        } catch (e) {
+            console.error(e);
+            setMessage(`테스트 완료! 평균: ${avg}ms (네트워크 오류)`);
+        }
     };
 
     useEffect(() => {
