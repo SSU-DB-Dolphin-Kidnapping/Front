@@ -243,7 +243,7 @@ const SubjectList = () => {
 
     const formatSchedule = (schedules?: components['schemas']['ScheduleDTO'][]) => {
         if (!schedules || schedules.length === 0) return "미지정";
-        return schedules.map(s => `${s.day} ${s.startTime} (${s.classroom})`).join(", ");
+        return schedules.map(s => <p>{`${s.day} ${s.startTime} (${s.classroom})`}</p>);
     };
 
     const getMajorTypeBadge = (type?: string) => {
@@ -349,7 +349,7 @@ const SubjectList = () => {
                                     <TableCell>{lecture.targetGrade}</TableCell>
                                     <TableCell className="font-medium">
                                         {lecture.courseName}
-                                        <div className="text-xs text-muted-foreground">{lecture.className}</div>
+                                        <div className="text-xs text-muted-foreground">{lecture.className ? `분반: ${lecture.className}` : ""}</div>
                                     </TableCell>
                                     <TableCell>{lecture.professorName}</TableCell>
                                     <TableCell>{lecture.credit}</TableCell>
@@ -380,7 +380,7 @@ const SubjectList = () => {
                                                 onValueChange={(value) => {
                                                     // value is bucketElementId string
                                                     if (lecture.teachId) {
-                                                        handleSetAlternative(parseInt(value), lecture.teachId);
+                                                        handleSetAlternative(parseInt(value), lecture.bucketElementId);
                                                     }
                                                 }}
                                             >

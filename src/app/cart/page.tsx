@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import {
     mockBucketSummaries,
     mockBucketItems,
-    BucketSummaryDTO,
-    BucketResponseDTO
 } from '@/utils/mockData';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -27,6 +25,10 @@ import {
 } from "@/components/ui/card";
 import { client } from '@/lib/api';
 import { Plus, Star, Save } from 'lucide-react';
+import { components } from '@/types/api';
+
+type BucketSummaryDTO = components["schemas"]["BucketSummaryDTO"];
+type BucketResponseDTO = components["schemas"]["BucketResponseDTO"];
 
 const Cart = () => {
     // State
@@ -47,7 +49,10 @@ const Cart = () => {
     useEffect(() => {
         if (!selectedBucketId && buckets.length > 0) {
             const best = buckets.find(b => b.isBest);
-            setSelectedBucketId(best ? best.bucketId : buckets[0].bucketId);
+            const targetId = best?.bucketId ?? buckets[0]?.bucketId ?? null;
+            if (targetId !== null) {
+                setSelectedBucketId(targetId);
+            }
         }
     }, [buckets, selectedBucketId]);
 
@@ -63,10 +68,9 @@ const Cart = () => {
     const fetchBuckets = async () => {
         setLoading(true);
         try {
-            const { data, error } = await client.GET("/api/bucket/list");
+            const { data, error } = await client.GET("/api/buckets");
             if (data?.result) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setBuckets(data.result as any[]);
+                setBuckets(data.result);
             } else {
                 console.log("Using mock bucket summaries", error);
                 setBuckets(mockBucketSummaries);
@@ -82,19 +86,19 @@ const Cart = () => {
     const fetchItems = async () => {
         if (!selectedBucketId) return;
 
-        // Note: Real API might typically require bucketId to fetch specific items if not the 'current' one.
-        // Assuming /api/bucket might behave contextually or we need a new endpoint.
-        // For now, using /api/bucket as placeholder.
         try {
-            const { data, error } = await client.GET("/api/bucket");
+            const { data, error } = await client.GET("/api/buckets/{bucketId}/elements", {
+                params: {
+                    path: { bucketId: selectedBucketId }
+                }
+            });
             if (data?.result) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const fetchedItems = data.result as any[];
+                const fetchedItems = data.result;
                 // Sort by priority
-                setItems(fetchedItems.sort((a, b) => a.priority - b.priority));
+                setItems(fetchedItems.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)));
             } else {
                 console.log("Using mock bucket items", error);
-                setItems(mockBucketItems.sort((a, b) => a.priority - b.priority));
+                setItems(mockBucketItems.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)));
             }
         } catch (e) {
             console.error("Failed to fetch items", e);
@@ -105,7 +109,7 @@ const Cart = () => {
     const handleCreateBucket = async () => {
         if (!newBucketName.trim()) return;
         try {
-            const { error } = await client.POST("/api/bucket/create", {
+            const { error } = await client.POST("/api/buckets", {
                 body: { name: newBucketName }
             });
             if (error) throw error;
@@ -123,8 +127,8 @@ const Cart = () => {
     const handleSetBest = async () => {
         if (!selectedBucketId) return;
         try {
-            const { error } = await client.PATCH("/api/bucket/best", {
-                body: { bucketId: selectedBucketId }
+            const { error } = await client.PATCH("/api/buckets/{bucketId}/select", {
+                params: { path: { bucketId: selectedBucketId } }
             });
             if (error) throw error;
 
@@ -156,13 +160,16 @@ const Cart = () => {
     };
 
     const handleSavePriorities = async () => {
+        if (!selectedBucketId) return;
+
         try {
             const priorityPayload = items.map(item => ({
                 bucketElementId: item.bucketElementId,
                 priority: item.priority
             }));
 
-            const { error } = await client.PATCH("/api/bucket/priority", {
+            const { error } = await client.PATCH("/api/buckets/{bucketId}/elements/priorities", {
+                params: { path: { bucketId: selectedBucketId } },
                 body: priorityPayload
             });
 
@@ -217,7 +224,7 @@ const Cart = () => {
                                         p-3 rounded-md border flex justify-between items-center cursor-pointer transition-colors
                                         ${bucket.bucketId === selectedBucketId ? 'bg-muted border-primary' : 'hover:bg-muted/50'}
                                     `}
-                                    onClick={() => setSelectedBucketId(bucket.bucketId)}
+                                    onClick={() => setSelectedBucketId(bucket.bucketId ?? null)}
                                 >
                                     <div>
                                         <div className="font-medium flex items-center gap-2">
@@ -225,7 +232,7 @@ const Cart = () => {
                                             {bucket.isBest && <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />}
                                         </div>
                                         <div className="text-xs text-muted-foreground">
-                                            {new Date(bucket.createdAt).toLocaleDateString()}
+                                            {bucket.createdAt ? new Date(bucket.createdAt).toLocaleDateString() : '-'}
                                         </div>
                                     </div>
                                     {bucket.isBest && (
