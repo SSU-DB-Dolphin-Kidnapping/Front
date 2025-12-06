@@ -104,32 +104,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/bucket": {
+    "/api/buckets": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getBucket"];
+        /**
+         * 내 장바구니 목록 조회
+         * @description 현재 학생이 생성한 모든 장바구니 목록을 조회합니다.
+         */
+        get: operations["getMyBuckets"];
         put?: never;
-        post: operations["addCourse"];
+        /**
+         * 새 장바구니 생성
+         * @description 새로운 장바구니를 생성합니다. 첫 번째 장바구니는 자동으로 대표 장바구니로 설정됩니다.
+         */
+        post: operations["createBucket"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/bucket/create": {
+    "/api/buckets/{bucketId}/elements": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * 장바구니 과목 목록 조회
+         * @description 특정 장바구니에 담긴 과목 목록을 조회합니다.
+         */
+        get: operations["getBucketElements"];
         put?: never;
-        post: operations["createBucket"];
+        /**
+         * 장바구니에 과목 추가
+         * @description 특정 장바구니에 새로운 과목을 추가합니다. 우선순위는 자동으로 마지막에 배정됩니다.
+         */
+        post: operations["addCourse"];
         delete?: never;
         options?: never;
         head?: never;
@@ -187,16 +203,24 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * 반응 속도 조회
+         * @description 현재 학생의 평균 반응 속도를 조회합니다.
+         */
         get: operations["getReactionTime"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
+        /**
+         * 반응 속도 업데이트
+         * @description 학생의 평균 반응 속도를 업데이트합니다. 새로운 반응 시간을 기존 평균과 가중 평균하여 저장합니다.
+         */
         patch: operations["updateReactionTime"];
         trace?: never;
     };
-    "/api/bucket/priority": {
+    "/api/buckets/{bucketId}/select": {
         parameters: {
             query?: never;
             header?: never;
@@ -209,26 +233,38 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch: operations["updatePriorities"];
-        trace?: never;
-    };
-    "/api/bucket/best": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
+        /**
+         * 대표 장바구니 설정
+         * @description 특정 장바구니를 대표 장바구니로 설정합니다. 수강신청 시 대표 장바구니가 사용됩니다.
+         */
         patch: operations["setBestBucket"];
         trace?: never;
     };
-    "/api/bucket/alternate": {
+    "/api/buckets/{bucketId}/elements/{elementId}/alternate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 대체 과목 설정 해제
+         * @description 특정 과목에 설정된 대체 과목을 해제합니다.
+         */
+        delete: operations["removeAlternateCourse"];
+        options?: never;
+        head?: never;
+        /**
+         * 대체 과목 설정
+         * @description 특정 과목의 대체 과목을 설정합니다. 수강신청 실패 시 자동으로 대체 과목으로 신청을 시도합니다.
+         */
+        patch: operations["updateAlternateCourse"];
+        trace?: never;
+    };
+    "/api/buckets/{bucketId}/elements/priorities": {
         parameters: {
             query?: never;
             header?: never;
@@ -241,7 +277,11 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch: operations["updateAlternateCourse"];
+        /**
+         * 장바구니 과목 우선순위 변경
+         * @description 장바구니에 담긴 과목들의 우선순위를 일괄 변경합니다.
+         */
+        patch: operations["updatePriorities"];
         trace?: never;
     };
     "/api/test/results": {
@@ -284,14 +324,18 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/bucket/list": {
+    "/api/lectures": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getMyBuckets"];
+        /**
+         * 강의 목록 조회
+         * @description 커서 기반 페이지네이션으로 강의 목록을 조회합니다. 강의명, 교수명, 학년으로 필터링할 수 있습니다.
+         */
+        get: operations["getLectures"];
         put?: never;
         post?: never;
         delete?: never;
@@ -300,7 +344,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/bucket/{bucketElementId}": {
+    "/api/buckets/{bucketId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -310,13 +354,17 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["deleteCourse"];
+        /**
+         * 장바구니 삭제
+         * @description 특정 장바구니를 삭제합니다. 대표 장바구니는 삭제할 수 없습니다.
+         */
+        delete: operations["deleteBucket"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/bucket/cart/{bucketId}": {
+    "/api/buckets/{bucketId}/elements/{elementId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -326,7 +374,11 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["deleteBucket"];
+        /**
+         * 장바구니에서 과목 삭제
+         * @description 장바구니에서 특정 과목을 삭제합니다.
+         */
+        delete: operations["deleteCourse"];
         options?: never;
         head?: never;
         patch?: never;
@@ -421,12 +473,12 @@ export interface components {
             studentName?: string;
             nickname?: string;
         };
+        BucketCreateRequestDTO: {
+            name?: string;
+        };
         BucketAddRequestDTO: {
             /** Format: int64 */
             teachId?: number;
-        };
-        BucketCreateRequestDTO: {
-            name?: string;
         };
         StudentUpdateRequestDTO: {
             studentName?: string;
@@ -449,21 +501,15 @@ export interface components {
             /** Format: double */
             avgReactionTime?: number;
         };
+        BucketAlternateRequestDTO: {
+            /** Format: int64 */
+            alternateTeachId?: number;
+        };
         BucketPriorityRequestDTO: {
             /** Format: int64 */
             bucketElementId?: number;
             /** Format: int32 */
             priority?: number;
-        };
-        BucketSelectRequestDTO: {
-            /** Format: int64 */
-            bucketId?: number;
-        };
-        BucketAlternateRequestDTO: {
-            /** Format: int64 */
-            bucketElementId?: number;
-            /** Format: int64 */
-            alternateTeachId?: number;
         };
         BaseResponseListTestSummaryDTO: {
             isSuccess?: boolean;
@@ -526,6 +572,64 @@ export interface components {
             /** Format: double */
             result?: number;
         };
+        BaseResponseLectureListDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["LectureListDTO"];
+        };
+        LectureInfoDTO: {
+            /** Format: int64 */
+            teachId?: number;
+            courseName?: string;
+            professorName?: string;
+            /** Format: float */
+            credit?: number;
+            /** Format: int32 */
+            year?: number;
+            semester?: string;
+            className?: string;
+            /** Format: int32 */
+            targetGrade?: number;
+            type?: string;
+            schedules?: components["schemas"]["ScheduleDTO"][];
+        };
+        LectureListDTO: {
+            lectures?: components["schemas"]["LectureInfoDTO"][];
+            /** Format: int64 */
+            nextCursor?: number;
+            hasNext?: boolean;
+        };
+        LocalTime: {
+            /** Format: int32 */
+            hour?: number;
+            /** Format: int32 */
+            minute?: number;
+            /** Format: int32 */
+            second?: number;
+            /** Format: int32 */
+            nano?: number;
+        };
+        ScheduleDTO: {
+            day?: string;
+            startTime?: components["schemas"]["LocalTime"];
+            endTime?: components["schemas"]["LocalTime"];
+            classroom?: string;
+        };
+        BaseResponseListBucketSummaryDTO: {
+            isSuccess?: boolean;
+            code?: string;
+            message?: string;
+            result?: components["schemas"]["BucketSummaryDTO"][];
+        };
+        BucketSummaryDTO: {
+            /** Format: int64 */
+            bucketId?: number;
+            name?: string;
+            isBest?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+        };
         BaseResponseListBucketResponseDTO: {
             isSuccess?: boolean;
             code?: string;
@@ -546,20 +650,6 @@ export interface components {
             /** Format: int64 */
             alternateTeachId?: number;
             alternateSubjectName?: string;
-        };
-        BaseResponseListBucketSummaryDTO: {
-            isSuccess?: boolean;
-            code?: string;
-            message?: string;
-            result?: components["schemas"]["BucketSummaryDTO"][];
-        };
-        BucketSummaryDTO: {
-            /** Format: int64 */
-            bucketId?: number;
-            name?: string;
-            isBest?: boolean;
-            /** Format: date-time */
-            createdAt?: string;
         };
     };
     responses: never;
@@ -690,7 +780,7 @@ export interface operations {
             };
         };
     };
-    getBucket: {
+    getMyBuckets: {
         parameters: {
             query?: never;
             header?: never;
@@ -699,37 +789,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description 장바구니 목록 조회 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["BaseResponseListBucketResponseDTO"];
-                };
-            };
-        };
-    };
-    addCourse: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BucketAddRequestDTO"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BaseResponseVoid"];
+                    "*/*": components["schemas"]["BaseResponseListBucketSummaryDTO"];
                 };
             };
         };
@@ -747,7 +813,57 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
+            /** @description 장바구니 생성 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    getBucketElements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 장바구니 ID */
+                bucketId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 과목 목록 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseListBucketResponseDTO"];
+                };
+            };
+        };
+    };
+    addCourse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 장바구니 ID */
+                bucketId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketAddRequestDTO"];
+            };
+        };
+        responses: {
+            /** @description 과목 추가 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -841,7 +957,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description 반응 속도 조회 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -865,31 +981,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BaseResponseVoid"];
-                };
-            };
-        };
-    };
-    updatePriorities: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BucketPriorityRequestDTO"][];
-            };
-        };
-        responses: {
-            /** @description OK */
+            /** @description 반응 속도 업데이트 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -904,16 +996,40 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description 대표로 설정할 장바구니 ID */
+                bucketId: number;
+            };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BucketSelectRequestDTO"];
+        requestBody?: never;
+        responses: {
+            /** @description 대표 장바구니 설정 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
             };
         };
+    };
+    removeAlternateCourse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 장바구니 ID */
+                bucketId: number;
+                /** @description 대체 과목을 해제할 항목 ID */
+                elementId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description 대체 과목 해제 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -928,7 +1044,12 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description 장바구니 ID */
+                bucketId: number;
+                /** @description 대체 과목을 설정할 항목 ID */
+                elementId: number;
+            };
             cookie?: never;
         };
         requestBody: {
@@ -937,7 +1058,34 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
+            /** @description 대체 과목 설정 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BaseResponseVoid"];
+                };
+            };
+        };
+    };
+    updatePriorities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 장바구니 ID */
+                bucketId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BucketPriorityRequestDTO"][];
+            };
+        };
+        responses: {
+            /** @description 우선순위 변경 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -991,38 +1139,50 @@ export interface operations {
             };
         };
     };
-    getMyBuckets: {
+    getLectures: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description 커서 ID (다음 페이지 조회용) */
+                cursorId?: number;
+                /** @description 한 페이지당 개수 (기본값: 20) */
+                size?: number;
+                /** @description 강의명 (부분 검색) */
+                name?: string;
+                /** @description 교수명 (부분 검색) */
+                professor?: string;
+                /** @description 학년 필터 */
+                grade?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description 강의 목록 조회 성공 */
+            LECTURE_200_1: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["BaseResponseListBucketSummaryDTO"];
+                    "*/*": components["schemas"]["BaseResponseLectureListDTO"];
                 };
             };
         };
     };
-    deleteCourse: {
+    deleteBucket: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                bucketElementId: number;
+                /** @description 삭제할 장바구니 ID */
+                bucketId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description 장바구니 삭제 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1033,18 +1193,21 @@ export interface operations {
             };
         };
     };
-    deleteBucket: {
+    deleteCourse: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description 장바구니 ID */
                 bucketId: number;
+                /** @description 삭제할 장바구니 항목 ID */
+                elementId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description 과목 삭제 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
