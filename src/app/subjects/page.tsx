@@ -22,8 +22,11 @@ import {
 } from "@/components/ui/select";
 import { client } from '@/lib/api';
 import { components } from '@/types/api';
+import { toast } from "sonner";
 
 type LectureInfoDTO = components['schemas']['LectureInfoDTO'];
+type BucketResponseDTO = components['schemas']['BucketResponseDTO'];
+type BucketSummaryDTO = components['schemas']['BucketSummaryDTO'];
 
 const SubjectList = () => {
     // Search states
@@ -38,6 +41,11 @@ const SubjectList = () => {
     const [nextCursor, setNextCursor] = useState<number | undefined>(undefined);
     const [hasNext, setHasNext] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+    // Bucket states for Alternative Subject feature
+    const [buckets, setBuckets] = useState<BucketSummaryDTO[]>([]);
+    const [selectedBucketId, setSelectedBucketId] = useState<string>("");
+    const [myBucketElements, setMyBucketElements] = useState<BucketResponseDTO[]>([]);
 
     // Debounce search term
     useEffect(() => {
@@ -107,12 +115,125 @@ const SubjectList = () => {
         }
     }, [debouncedSearch, searchType, selectedGrade, nextCursor]);
 
+    const fetchBuckets = async () => {
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: bucketsData } = await client.GET("/api/buckets", {}) as any;
+
+            if (bucketsData?.result) {
+                const buckets = bucketsData.result as BucketSummaryDTO[];
+                setBuckets(buckets);
+
+                // Set default bucket (best or first) if not already set
+                if (!selectedBucketId && buckets.length > 0) {
+                    const best = buckets.find(b => b.isBest) || buckets[0];
+                    if (best && best.bucketId) {
+                        setSelectedBucketId(String(best.bucketId));
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Error fetching buckets:", e);
+        }
+    };
+
+    const fetchBucketElements = async () => {
+        if (!selectedBucketId) return;
+
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: elementsData } = await client.GET("/api/buckets/{bucketId}/elements", {
+                params: {
+                    path: { bucketId: parseInt(selectedBucketId) }
+                }
+            }) as any;
+
+            if (elementsData?.result) {
+                setMyBucketElements(elementsData.result as BucketResponseDTO[]);
+            }
+        } catch (e) {
+            console.error("Error fetching bucket elements:", e);
+        }
+    };
+
+    const handleAddToBucket = async (teachId: number) => {
+        if (!selectedBucketId) {
+            toast.error("장바구니를 먼저 선택해주세요.");
+            return;
+        }
+
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data, error } = await client.POST("/api/buckets/{bucketId}/elements", {
+                params: {
+                    path: { bucketId: parseInt(selectedBucketId) }
+                },
+                body: {
+                    teachId: teachId
+                }
+            }) as any;
+
+            if (data?.isSuccess) {
+                toast.success("장바구니에 담았습니다.");
+                fetchBucketElements(); // Refresh elements to show updated state
+            } else {
+                toast.error(`추가 실패: ${data?.message || error || "Unknown error"}`);
+            }
+        } catch (e) {
+            console.error("Error adding to bucket:", e);
+            toast.error("장바구니 추가 중 오류가 발생했습니다.");
+        }
+    };
+
+    const handleSetAlternative = async (bucketElementId: number, alternateTeachId: number) => {
+        if (!selectedBucketId) return;
+
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data, error } = await client.PATCH("/api/buckets/{bucketId}/elements/{elementId}/alternate", {
+                params: {
+                    path: {
+                        bucketId: parseInt(selectedBucketId),
+                        elementId: bucketElementId
+                    }
+                },
+                body: {
+                    alternateTeachId: alternateTeachId
+                }
+            }) as any;
+
+            if (data?.isSuccess) {
+                // Refresh bucket elements to update the UI
+                fetchBucketElements();
+                toast.success("대체 과목이 설정되었습니다.");
+            } else {
+                toast.error(`설정 실패: ${data?.message || error || "Unknown error"}`);
+            }
+        } catch (e) {
+            console.error("Error setting alternative subject:", e);
+            toast.error("대체 과목 설정 중 오류가 발생했습니다.");
+        }
+    };
+
     // Initial fetch and when filters change
     useEffect(() => {
         setNextCursor(undefined);
         fetchLectures(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch, searchType, selectedGrade]);
+
+    // Fetch buckets on mount
+    useEffect(() => {
+        fetchBuckets();
+    }, []);
+
+    // Fetch elements when selected bucket changes
+    useEffect(() => {
+        if (selectedBucketId) {
+            fetchBucketElements();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedBucketId]);
 
     const handleLoadMore = () => {
         if (!loading && hasNext) {
@@ -136,9 +257,24 @@ const SubjectList = () => {
 
     return (
         <div className="container py-10 animate-fade-in">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2">과목 조회</h1>
-                <p className="text-muted-foreground">수강신청 가능한 과목 목록입니다.</p>
+            <div className="flex items-center gap-4 mb-8">
+                <h1 className="text-3xl font-bold">과목 조회</h1>
+                {buckets.length > 0 && (
+                    <div className="w-[200px]">
+                        <Select value={selectedBucketId} onValueChange={setSelectedBucketId}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="장바구니 선택" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {buckets.map((b) => (
+                                    <SelectItem key={b.bucketId} value={String(b.bucketId)}>
+                                        {b.name} {b.isBest ? "(대표)" : ""}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                )}
             </div>
 
             <div className="mb-6 flex flex-col md:flex-row gap-4">
@@ -220,12 +356,48 @@ const SubjectList = () => {
                                     <TableCell className="text-sm text-muted-foreground">
                                         {formatSchedule(lecture.schedules)}
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        <Link href={`/subjects/${lecture.teachId}`}>
-                                            <Button variant="outline" size="sm">
-                                                상세보기
-                                            </Button>
-                                        </Link>
+                                    <TableCell className="text-right flex items-center justify-end gap-2">
+                                        {/* Add to Bucket Button */}
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => {
+                                                if (lecture.teachId) handleAddToBucket(lecture.teachId);
+                                            }}
+                                        >
+                                            추가
+                                        </Button>
+
+                                        {/* Alternative Dropdown */}
+                                        <div className="w-[180px]">
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    // value is bucketElementId string
+                                                    if (lecture.teachId) {
+                                                        handleSetAlternative(parseInt(value), lecture.teachId);
+                                                    }
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-8">
+                                                    <SelectValue placeholder="대체 과목으로 설정" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {myBucketElements
+                                                        .filter(el => !el.alternateTeachId) // Only show elements without alternative
+                                                        .map(el => (
+                                                            <SelectItem key={el.bucketElementId} value={String(el.bucketElementId)}>
+                                                                {el.courseName}
+                                                            </SelectItem>
+                                                        ))
+                                                    }
+                                                    {myBucketElements.filter(el => !el.alternateTeachId).length === 0 && (
+                                                        <div className="p-2 text-xs text-muted-foreground text-center">
+                                                            설정 가능한 과목 없음
+                                                        </div>
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))
