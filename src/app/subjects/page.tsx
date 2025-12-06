@@ -358,15 +358,21 @@ const SubjectList = () => {
                                     </TableCell>
                                     <TableCell className="text-right flex items-center justify-end gap-2">
                                         {/* Add to Bucket Button */}
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => {
-                                                if (lecture.teachId) handleAddToBucket(lecture.teachId);
-                                            }}
-                                        >
-                                            추가
-                                        </Button>
+                                        {(() => {
+                                            const isInBucket = myBucketElements.some(el => el.teachId === lecture.teachId);
+                                            return (
+                                                <Button
+                                                    variant={isInBucket ? "secondary" : "outline"}
+                                                    size="sm"
+                                                    disabled={isInBucket}
+                                                    onClick={() => {
+                                                        if (lecture.teachId && !isInBucket) handleAddToBucket(lecture.teachId);
+                                                    }}
+                                                >
+                                                    {isInBucket ? "담김" : "담기"}
+                                                </Button>
+                                            );
+                                        })()}
 
                                         {/* Alternative Dropdown */}
                                         <div className="w-[180px]">
