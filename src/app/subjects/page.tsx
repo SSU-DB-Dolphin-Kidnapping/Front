@@ -380,7 +380,7 @@ const SubjectList = () => {
                                                 onValueChange={(value) => {
                                                     // value is bucketElementId string
                                                     if (lecture.teachId) {
-                                                        handleSetAlternative(parseInt(value), lecture.bucketElementId);
+                                                        handleSetAlternative(parseInt(value), lecture.teachId);
                                                     }
                                                 }}
                                             >
