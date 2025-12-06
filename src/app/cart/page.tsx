@@ -26,6 +26,7 @@ import {
 import { client } from '@/lib/api';
 import { Plus, Star, Save } from 'lucide-react';
 import { components } from '@/types/api';
+import { Spinner } from "@/components/ui/spinner";
 
 type BucketSummaryDTO = components["schemas"]["BucketSummaryDTO"];
 type BucketResponseDTO = components["schemas"]["BucketResponseDTO"];
@@ -39,6 +40,11 @@ const Cart = () => {
     const [isCreatingWrapper, setIsCreatingWrapper] = useState(false); // UI toggle
     const [hasChanges, setHasChanges] = useState(false);
     const [selectedBucketId, setSelectedBucketId] = useState<number | null>(null);
+
+    // Operation loading states
+    const [isCreating, setIsCreating] = useState(false);
+    const [isSettingBest, setIsSettingBest] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     // Initial Fetch (Buckets)
     useEffect(() => {
@@ -108,6 +114,7 @@ const Cart = () => {
 
     const handleCreateBucket = async () => {
         if (!newBucketName.trim()) return;
+        setIsCreating(true);
         try {
             const { error } = await client.POST("/api/buckets", {
                 body: { name: newBucketName }
@@ -121,11 +128,14 @@ const Cart = () => {
         } catch (e) {
             console.error("Failed to create bucket", e);
             alert("장바구니 생성 실패");
+        } finally {
+            setIsCreating(false);
         }
     };
 
     const handleSetBest = async () => {
         if (!selectedBucketId) return;
+        setIsSettingBest(true);
         try {
             const { error } = await client.PATCH("/api/buckets/{bucketId}/select", {
                 params: { path: { bucketId: selectedBucketId } }
@@ -137,6 +147,8 @@ const Cart = () => {
         } catch (e) {
             console.error("Failed to set best bucket", e);
             alert("대표 장바구니 설정 실패");
+        } finally {
+            setIsSettingBest(false);
         }
     };
 
@@ -162,6 +174,7 @@ const Cart = () => {
     const handleSavePriorities = async () => {
         if (!selectedBucketId) return;
 
+        setIsSaving(true);
         try {
             const priorityPayload = items.map(item => ({
                 bucketElementId: item.bucketElementId,
@@ -180,6 +193,8 @@ const Cart = () => {
         } catch (e) {
             console.error("Failed to save priorities", e);
             alert("우선순위 저장 실패");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -212,8 +227,11 @@ const Cart = () => {
                                         value={newBucketName}
                                         onChange={e => setNewBucketName(e.target.value)}
                                         className="h-8 text-sm"
+                                        disabled={isCreating}
                                     />
-                                    <Button size="sm" onClick={handleCreateBucket}>확인</Button>
+                                    <Button size="sm" onClick={handleCreateBucket} disabled={isCreating}>
+                                        {isCreating ? <Spinner className="h-3 w-3" /> : "확인"}
+                                    </Button>
                                 </div>
                             )}
 
@@ -242,6 +260,11 @@ const Cart = () => {
                                     )}
                                 </div>
                             ))}
+                            {loading && buckets.length === 0 && (
+                                <div className="flex justify-center py-4">
+                                    <Spinner className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                            )}
                             {buckets.length === 0 && !loading && (
                                 <div className="text-sm text-muted-foreground text-center py-4">
                                     장바구니가 없습니다.
@@ -270,15 +293,16 @@ const Cart = () => {
                                     variant="outline"
                                     className="mt-2 text-yellow-600 border-yellow-200 hover:bg-yellow-50"
                                     onClick={handleSetBest}
+                                    disabled={isSettingBest}
                                 >
-                                    <Star className="h-4 w-4 mr-2" />
+                                    {isSettingBest ? <Spinner className="mr-2 h-4 w-4" /> : <Star className="h-4 w-4 mr-2" />}
                                     대표 장바구니로 설정
                                 </Button>
                             }
                             </div>
                             {items.length > 0 && (
-                                <Button onClick={handleSavePriorities} disabled={!hasChanges}>
-                                    <Save className="mr-2 h-4 w-4" />
+                                <Button onClick={handleSavePriorities} disabled={!hasChanges || isSaving}>
+                                    {isSaving ? <Spinner className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                                     {hasChanges ? "우선순위 저장" : "저장됨"}
                                 </Button>
                             )}
@@ -374,7 +398,7 @@ const Cart = () => {
                     </Card>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

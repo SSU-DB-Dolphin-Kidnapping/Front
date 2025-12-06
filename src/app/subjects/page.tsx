@@ -23,6 +23,7 @@ import {
 import { client } from '@/lib/api';
 import { components } from '@/types/api';
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 type LectureInfoDTO = components['schemas']['LectureInfoDTO'];
 type BucketResponseDTO = components['schemas']['BucketResponseDTO'];
@@ -46,6 +47,10 @@ const SubjectList = () => {
     const [buckets, setBuckets] = useState<BucketSummaryDTO[]>([]);
     const [selectedBucketId, setSelectedBucketId] = useState<string>("");
     const [myBucketElements, setMyBucketElements] = useState<BucketResponseDTO[]>([]);
+
+    // Operation loading states
+    const [addingToBucketId, setAddingToBucketId] = useState<number | null>(null);
+    const [settingAlternativeId, setSettingAlternativeId] = useState<number | null>(null);
 
     // Debounce search term
     useEffect(() => {
@@ -162,6 +167,7 @@ const SubjectList = () => {
             return;
         }
 
+        setAddingToBucketId(teachId);
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await client.POST("/api/buckets/{bucketId}/elements", {
@@ -182,12 +188,15 @@ const SubjectList = () => {
         } catch (e) {
             console.error("Error adding to bucket:", e);
             toast.error("장바구니 추가 중 오류가 발생했습니다.");
+        } finally {
+            setAddingToBucketId(null);
         }
     };
 
     const handleSetAlternative = async (bucketElementId: number, alternateTeachId: number) => {
         if (!selectedBucketId) return;
 
+        setSettingAlternativeId(bucketElementId);
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await client.PATCH("/api/buckets/{bucketId}/elements/{elementId}/alternate", {
@@ -212,6 +221,8 @@ const SubjectList = () => {
         } catch (e) {
             console.error("Error setting alternative subject:", e);
             toast.error("대체 과목 설정 중 오류가 발생했습니다.");
+        } finally {
+            setSettingAlternativeId(null);
         }
     };
 
@@ -364,11 +375,14 @@ const SubjectList = () => {
                                                 <Button
                                                     variant={isInBucket ? "secondary" : "outline"}
                                                     size="sm"
-                                                    disabled={isInBucket}
+                                                    disabled={isInBucket || addingToBucketId === lecture.teachId}
                                                     onClick={() => {
                                                         if (lecture.teachId && !isInBucket) handleAddToBucket(lecture.teachId);
                                                     }}
                                                 >
+                                                    {addingToBucketId === lecture.teachId ? (
+                                                        <Spinner className="mr-2 h-4 w-4" />
+                                                    ) : null}
                                                     {isInBucket ? "담김" : "담기"}
                                                 </Button>
                                             );
@@ -377,6 +391,7 @@ const SubjectList = () => {
                                         {/* Alternative Dropdown */}
                                         <div className="w-[180px]">
                                             <Select
+                                                disabled={!!settingAlternativeId}
                                                 onValueChange={(value) => {
                                                     // value is bucketElementId string
                                                     if (lecture.teachId) {
@@ -403,6 +418,7 @@ const SubjectList = () => {
                                                     )}
                                                 </SelectContent>
                                             </Select>
+                                            {settingAlternativeId && lecture.teachId && /* We might need to know WHICH dropdown is loading, but simplifying for now or mapping correctly */ null}
                                         </div>
                                     </TableCell>
                                 </TableRow>
