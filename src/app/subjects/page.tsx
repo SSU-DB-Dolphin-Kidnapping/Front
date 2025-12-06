@@ -13,6 +13,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { client } from '@/lib/api';
 import { components } from '@/types/api';
 
@@ -22,6 +29,8 @@ const SubjectList = () => {
     // Search states
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [searchType, setSearchType] = useState<"name" | "professor">("name");
+    const [selectedGrade, setSelectedGrade] = useState<string>("all");
 
     // Data states
     const [lectures, setLectures] = useState<LectureInfoDTO[]>([]);
@@ -50,27 +59,35 @@ const SubjectList = () => {
                 size?: number;
                 name?: string;
                 professor?: string;
+                grade?: number;
             } = {
                 cursorId: cursorToUse,
                 size: 20
             };
 
             if (debouncedSearch) {
-                // Determine if it's potentially a professor name or course name
-                // For now, we'll search by course name as primary
-                // Ideally backend should provide a generic 'keyword' or we search both
-                queryParams.name = debouncedSearch;
+                if (searchType === "name") {
+                    queryParams.name = debouncedSearch;
+                } else if (searchType === "professor") {
+                    queryParams.professor = debouncedSearch;
+                }
+            }
+
+            if (selectedGrade !== "all") {
+                queryParams.grade = parseInt(selectedGrade);
             }
 
             // The generated API types use 'LECTURE_200_1' as the success key instead of 200,
             // which causes client.GET to infer 'data' as never or undefined for 200 OK.
             // We need to use 'as any' to bypass the strict type check for now.
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data, error } = await client.GET("/api/lectures", {
+            const { data, error, response } = await client.GET("/api/lectures", {
                 params: {
                     query: queryParams
                 }
             }) as any;
+
+            console.log("API Response:", { data, error, status: response?.status });
 
             if (data?.result) {
                 // Verify the shape of data.result matches what we expect
@@ -88,15 +105,14 @@ const SubjectList = () => {
             setLoading(false);
             setIsInitialLoad(false);
         }
-    }, [debouncedSearch, nextCursor]);
+    }, [debouncedSearch, searchType, selectedGrade, nextCursor]);
 
-    // Initial fetch and search change
+    // Initial fetch and when filters change
     useEffect(() => {
-        // Reset and fetch when search term changes
         setNextCursor(undefined);
         fetchLectures(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedSearch]);
+    }, [debouncedSearch, searchType, selectedGrade]);
 
     const handleLoadMore = () => {
         if (!loading && hasNext) {
@@ -106,7 +122,7 @@ const SubjectList = () => {
 
     const formatSchedule = (schedules?: components['schemas']['ScheduleDTO'][]) => {
         if (!schedules || schedules.length === 0) return "미지정";
-        return schedules.map(s => `${s.day} ${s.startTime}~${s.endTime} (${s.classroom})`).join(", ");
+        return schedules.map(s => `${s.day} ${s.startTime} (${s.classroom})`).join(", ");
     };
 
     const getMajorTypeBadge = (type?: string) => {
@@ -125,14 +141,47 @@ const SubjectList = () => {
                 <p className="text-muted-foreground">수강신청 가능한 과목 목록입니다.</p>
             </div>
 
-            <div className="mb-6 flex gap-2">
-                <Input
-                    type="text"
-                    placeholder="과목명으로 검색..."
-                    value={searchTerm}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                    className="max-w-md"
-                />
+            <div className="mb-6 flex flex-col md:flex-row gap-4">
+                <div className="flex gap-2 flex-1">
+                    <Select
+                        value={searchType}
+                        onValueChange={(val: "name" | "professor") => setSearchType(val)}
+                    >
+                        <SelectTrigger className="w-[120px]">
+                            <SelectValue placeholder="검색 기준" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="name">과목명</SelectItem>
+                            <SelectItem value="professor">교수명</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Input
+                        type="text"
+                        placeholder={`${searchType === 'name' ? '과목명' : '교수명'}으로 검색...`}
+                        value={searchTerm}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                        className="max-w-md flex-1"
+                    />
+                </div>
+
+                <div className="w-full md:w-[150px]">
+                    <Select
+                        value={selectedGrade}
+                        onValueChange={setSelectedGrade}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="학년 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">전체 학년</SelectItem>
+                            <SelectItem value="1">1학년</SelectItem>
+                            <SelectItem value="2">2학년</SelectItem>
+                            <SelectItem value="3">3학년</SelectItem>
+                            <SelectItem value="4">4학년</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             <div className="border rounded-md mb-4">
@@ -161,13 +210,13 @@ const SubjectList = () => {
                                     <TableCell>
                                         {getMajorTypeBadge(lecture.type)}
                                     </TableCell>
-                                    <TableCell>{lecture.targetGrade}학년</TableCell>
+                                    <TableCell>{lecture.targetGrade}</TableCell>
                                     <TableCell className="font-medium">
                                         {lecture.courseName}
-                                        <div className="text-xs text-muted-foreground">{lecture.className}분반</div>
+                                        <div className="text-xs text-muted-foreground">{lecture.className}</div>
                                     </TableCell>
                                     <TableCell>{lecture.professorName}</TableCell>
-                                    <TableCell>{lecture.credit}학점</TableCell>
+                                    <TableCell>{lecture.credit}</TableCell>
                                     <TableCell className="text-sm text-muted-foreground">
                                         {formatSchedule(lecture.schedules)}
                                     </TableCell>
